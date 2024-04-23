@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Payment{% endblock title %}
+{% block body %}
+
+{% if error and error == "Payment Failed!" %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>{{error}}</strong> {{errorMsg}}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+<div class="container my-3">
+  <h2>Make Payment</h2>
+  <form action="/payment" method="POST">
+    <div class="mb-3">
+      <label for="emailInput" class="form-label">Email Address</label>
+      <input type="email" class="form-control" id="emailInput" name="email" />
+    </div>
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount(₹)</label>
+      <input type="number" class="form-control" id="amount" name="amount" step="1" />
+    </div>
+    <button type="submit" class="btn btn-dark">Pay Now</button>
+  </form>
+</div>
+
+<div class="container my-3">
+  <h2>Transaction History</h2>
+
+  {% if allPayment|length == 0 %}
+
+  <div class="alert alert-primary" role="alert">
+    No Payments found. Make your first payment now!
+  </div>
+  {% else %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">SNo</th>
+          <th scope="col">Sender Email</th>
+          <th scope="col">Receiver Email</th>
+          <th scope="col">Amount(₹)</th>
+          <th scope="col">Time</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for payment in allPayment %}
+        <tr>
+          <th scope="row">{{loop.index}}</th>
+          <td>{{payment.sender_email}}</td>
+          <td>{{payment.receiver_email}}</td>
+          <td>{{payment.amount}}</td>
+          <td>{{ payment.date_created.strftime('%Y-%m-%d') }}</td>
+          <td>
+            <a href="/delete_payment/{{payment.sno}}" type="button" class="btn btn-outline-danger btn-sm">Delete</a>
+
+          </td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+{% endblock body %}
